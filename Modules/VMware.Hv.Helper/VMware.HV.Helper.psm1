@@ -7980,7 +7980,7 @@ function Get-HVPoolSpec {
     $FilePath,
 
     [Parameter(Mandatory = $false)]
-    $HvServer = $null
+    $HvServer
   )
 
   $DesktopSpec = New-Object VMware.HV.DesktopSpec
@@ -7994,7 +7994,7 @@ function Get-HVPoolSpec {
   $DesktopPsObj.Base = New-Object PsObject -Property @{
     name = $DesktopInfoPsObj.Base.Name;
     displayName = $DesktopInfoPsObj.Base.displayName;
-    accessGroup = (Get-HVInternalName -EntityId $entityId);
+    accessGroup = (Get-HVInternalName -EntityId $entityId -HvServer $hvServer);
     description = $DesktopInfoPsObj.Base.description;
   }
 
@@ -8002,7 +8002,7 @@ function Get-HVPoolSpec {
     $DesktopPsObj.GlobalEntitlementData = $null
   } else {
     $entityId = $DesktopInfoPsObj.GlobalEntitlementData.GlobalEntitlement
-    $DesktopPsObj.GlobalEntitlementData = Get-HVInternalName -EntityId $entityId
+    $DesktopPsObj.GlobalEntitlementData = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
   }
 
   Switch ($DesktopInfo.Type) {
@@ -8032,33 +8032,33 @@ function Get-HVPoolSpec {
       $ProvisioningSettingsObj = $DesktopInfoPsObj.AutomatedDesktopData.VirtualCenterProvisioningSettings
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.Datacenter){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.Datacenter.Id
-        $virtualCenterProvisioningDataObj.Datacenter  = Get-HVInternalName -EntityId $entityId
+        $virtualCenterProvisioningDataObj.Datacenter  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.HostOrCluster){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.HostOrCluster.Id
-        $virtualCenterProvisioningDataObj.HostOrCluster  = Get-HVInternalName -EntityId $entityId
+        $virtualCenterProvisioningDataObj.HostOrCluster  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.ResourcePool){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.ResourcePool.Id
-        $virtualCenterProvisioningDataObj.ResourcePool  = Get-HVInternalName -EntityId $entityId
+        $virtualCenterProvisioningDataObj.ResourcePool  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.ParentVm){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.ParentVm.Id
         $virtualCenterProvisioningDataObj.ParentVm  = Get-HVInternalName -EntityId $entityId `
-          -VcId $DesktopInfo.AutomatedDesktopData.virtualCenter
+          -VcId $DesktopInfo.AutomatedDesktopData.virtualCenter -HvServer $hvServer
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.Snapshot){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.Snapshot.Id
-        $virtualCenterProvisioningDataObj.Snapshot  = Get-HVInternalName -EntityId $entityId `
+        $virtualCenterProvisioningDataObj.Snapshot  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer `
         -BaseImageVmId $DesktopInfo.AutomatedDesktopData.VirtualCenterProvisioningSettings.VirtualCenterProvisioningData.ParentVm
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.Template){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.Template.Id
-        $virtualCenterProvisioningDataObj.Template  = Get-HVInternalName -EntityId $entityId
+        $virtualCenterProvisioningDataObj.Template  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($ProvisioningSettingsObj.VirtualCenterProvisioningData.VmFolder){
         $entityId.Id = $ProvisioningSettingsObj.VirtualCenterProvisioningData.VmFolder.Id
-        $virtualCenterProvisioningDataObj.VmFolder  = Get-HVInternalName -EntityId $entityId
+        $virtualCenterProvisioningDataObj.VmFolder  = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
 
       $DesktopInfoPsObj.AutomatedDesktopData.VirtualCenterProvisioningSettings.VirtualCenterProvisioningData = `
@@ -8072,7 +8072,7 @@ function Get-HVPoolSpec {
       if($virtualCenterStorageSettingsObj.replicaDiskDatastore) {
         $entityId.Id = $virtualCenterStorageSettingsObj.replicaDiskDatastore.Id
         $DesktopInfoPsObj.AutomatedDesktopData.VirtualCenterProvisioningSettings.virtualCenterStorageSettings.replicaDiskDatastore =`
-          Get-HVInternalName -EntityId $entityId
+          Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if($virtualCenterStorageSettingsObj.persistentDiskSettings) {
         $datastores = $virtualCenterStorageSettingsObj.persistentDiskSettings.persistentDiskDatastores
@@ -8082,23 +8082,23 @@ function Get-HVPoolSpec {
       }
       if ($DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.domainAdministrator) {
         $entityId.Id = $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.domainAdministrator.Id
-        $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.domainAdministrator = Get-HVInternalName -EntityId $entityId
+        $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.domainAdministrator = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.adContainer) {
         $entityId.Id = $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.adContainer.Id
-        $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.adContainer = Get-HVInternalName -EntityId $entityId
+        $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.adContainer = Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.sysprepCustomizationSettings) {
         $entityId.Id = `
           $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.sysprepCustomizationSettings.customizationSpec.Id
         $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.sysprepCustomizationSettings.customizationSpec = `
-          Get-HVInternalName -EntityId $entityId
+          Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
       if ($DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.cloneprepCustomizationSettings) {
         $entityId.Id = `
           $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.cloneprepCustomizationSettings.instantCloneEngineDomainAdministrator.Id
         $DesktopInfoPsObj.AutomatedDesktopData.customizationSettings.cloneprepCustomizationSettings.instantCloneEngineDomainAdministrator = `
-          Get-HVInternalName -EntityId $entityId
+          Get-HVInternalName -EntityId $entityId -HvServer $hvServer
       }
 
       $DesktopPsObj.AutomatedDesktopSpec = New-Object PsObject  -Property @{
@@ -8113,7 +8113,7 @@ function Get-HVPoolSpec {
       if ($DesktopInfoPsObj.AutomatedDesktopData.virtualCenter) {
         $entityId.Id = $DesktopInfoPsObj.AutomatedDesktopData.virtualCenter.Id
         $DesktopPsObj.AutomatedDesktopSpec.virtualCenter = Get-HVInternalName `
-          -EntityId $entityId
+          -EntityId $entityId -HvServer $hvServer
       }
       break
     }
